@@ -1,0 +1,18 @@
+service:
+  name: cinder-scheduler
+  containers:
+    - name: cinder-scheduler
+      image: cinder-scheduler
+      probes:
+        readiness: "true"
+        liveness: "true"
+      daemon:
+        command: cinder-scheduler --config-file /etc/cinder/cinder.conf
+        files:
+          - cinder-conf
+        dependencies:
+          - cinder-api
+files:
+  cinder-conf:
+    path: /etc/cinder/cinder.conf
+    content: cinder.conf.j2
