@@ -1,0 +1,24 @@
+configs:
+  cinder_api_port: 8776
+  cinder_debug: false
+
+  cinder_db_name: "cinder"
+  cinder_db_username: "cinder"
+  cinder_db_password: "password"
+
+  cinder_username: "cinder"
+  cinder_password: "password"
+
+  cinder_enabled_backends: "rbd"
+
+  cinder_enable_ceph: false
+  cinder_ceph_key: "Changeme"
+  cinder_ceph_username: "cinder"
+  cinder_ceph_pool_name: "volumes"
+  cinder_ceph_backup_pool_name: "backup"
+  cinder_rbd_secret_uuid: "Changeme"
+
+sources:
+  openstack/cinder:
+    git_url: https://github.com/openstack/cinder.git
+    git_ref: stable/newton
