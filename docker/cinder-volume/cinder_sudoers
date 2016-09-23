@@ -1,0 +1,5 @@
+cinder ALL = (root) NOPASSWD: /var/lib/microservices/venv/bin/cinder-rootwrap /etc/cinder/rootwrap.conf *
+%microservices ALL=(root) NOPASSWD: /bin/chown -R cinder\:microservices /var/lib/cinder, /usr/bin/chown -R cinder\:microservices /var/lib/cinder
+%microservices ALL=(root) NOPASSWD: /bin/chmod 2775 /var/lib/cinder, /usr/bin/chmod 2775 /var/lib/cinder
+%microservices ALL=(root) NOPASSWD: /bin/chown -R cinder\:microservices /etc/iscsi, /usr/bin/chown -R cinder\:microservices /etc/iscsi
+%microservices ALL=(root) NOPASSWD: /bin/chmod 2775 /etc/iscsi, /usr/bin/chmod 2775 /etc/iscsi
