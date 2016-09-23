@@ -1,0 +1,26 @@
+FROM {{ image_spec("openstack-base") }}
+MAINTAINER {{ maintainer }}
+
+COPY sources.list.debian /etc/apt/sources.list.d/ceph.list
+RUN apt-key adv --recv-keys --keyserver hkp://keyserver.ubuntu.com:80 460F3994 \
+    && apt-get update \
+    && apt-get install -y --no-install-recommends qemu-utils ceph-common python-ceph python-rados \
+    && apt-get clean \
+    && ln -s /usr/lib/python2.7/dist-packages/rados.so /var/lib/microservices/venv/local/lib/python2.7/site-packages/rados.so \
+    && ln -s /usr/lib/python2.7/dist-packages/rados-0.egg-info /var/lib/microservices/venv/local/lib/python2.7/site-packages/rados-0.egg-info \
+    && ln -s /usr/lib/python2.7/dist-packages/rbd-0.egg-info /var/lib/microservices/venv/local/lib/python2.7/site-packages/rbd-0.egg-info \
+    && ln -s /usr/lib/python2.7/dist-packages/rbd.so /var/lib/microservices/venv/local/lib/python2.7/site-packages/rbd.so
+
+{{ copy_sources("openstack/cinder", "/cinder") }}
+
+RUN useradd --user-group -G microservices cinder \
+    && /var/lib/microservices/venv/bin/pip install --upgrade /cinder \
+    && mkdir -p /etc/cinder /var/lib/cinder /home/cinder /etc/ceph \
+    && cp -r /cinder/etc/cinder/* /etc/cinder/ \
+    && chown -R cinder: /etc/cinder /var/lib/cinder /home/cinder /etc/ceph \
+    && sed -i 's|^exec_dirs.*|exec_dirs=/var/lib/microservices/venv/bin,/sbin,/usr/sbin,/bin,/usr/bin,/usr/local/bin,/usr/local/sbin|g' /etc/cinder/rootwrap.conf
+
+COPY cinder_sudoers /etc/sudoers.d/cinder_sudoers
+
+RUN chmod 750 /etc/sudoers.d \
+    && chmod 440 /etc/sudoers.d/cinder_sudoers
