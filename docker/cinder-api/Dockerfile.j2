@@ -1,0 +1,6 @@
+FROM {{ namespace }}/cinder-base:{{ tag }}
+MAINTAINER {{ maintainer }}
+
+RUN apt-get install -y --no-install-recommends mysql-client
+
+USER cinder
