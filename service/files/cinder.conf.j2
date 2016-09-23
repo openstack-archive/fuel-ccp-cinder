@@ -1,0 +1,56 @@
+[DEFAULT]
+debug = {{ cinder.debug }}
+use_forwarded_for = True
+use_stderr = True
+
+volume_name_template = volume-%s
+
+glance_api_servers = {{ address('glance-api') }}:{{ glance.api_port }}
+
+glance_num_retries = 3
+glance_api_version = 2
+
+os_region_name = RegionOne
+
+enabled_backends = {{ cinder.enabled_backends }}
+
+osapi_volume_listen = {{ network_topology["private"]["address"] }}
+osapi_volume_listen_port = {{ cinder.api_port }}
+
+api_paste_config = /etc/cinder/api-paste.ini
+nova_catalog_info = compute:nova:internalURL
+glance_catalog_info = image:glance:internalURL
+
+auth_strategy = keystone
+transport_url=rabbit://{{ rabbitmq.user }}:{{ rabbitmq.password }}@{{ address('rabbitmq') }}
+
+[database]
+connection = mysql+pymysql://{{ cinder.db.username }}:{{ cinder.db.password }}@{{ address('mariadb') }}/{{ cinder.db.name }}
+max_retries = -1
+
+[keystone_authtoken]
+auth_version = v3
+auth_uri = http://{{ address('keystone') }}:{{ keystone.public_port }}/v3
+auth_url = http://{{ address('keystone') }}:{{ keystone.admin_port }}/v3
+auth_type = password
+project_domain_id = default
+user_domain_id = default
+project_name = service
+username = {{ cinder.username }}
+password = {{ cinder.password }}
+memcached_servers = {{ address('memcached') }}:{{ memcached.port }}
+
+[oslo_concurrency]
+lock_path = /var/lib/cinder/tmp
+
+{% if cinder.ceph.enable %}
+[rbd]
+volume_driver = cinder.volume.drivers.rbd.RBDDriver
+rbd_user = {{ cinder.ceph.username }}
+rbd_secret_uuid = {{ cinder.ceph.rbd_secret_uuid }}
+rbd_pool = {{ cinder.ceph.pool_name }}
+rbd_ceph_conf = /etc/ceph/ceph.conf
+{% endif %}
+
+[privsep_entrypoint]
+helper_command=sudo cinder-rootwrap /etc/cinder/rootwrap.conf privsep-helper --config-file /etc/cinder/cinder.conf
