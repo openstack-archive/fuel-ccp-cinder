@@ -1,0 +1,17 @@
+configs:
+  cinder_api_port: 8776
+  cinder_debug: false
+  cinder_enabled_backends: "rbd"
+  cinder_db_name: "cinder"
+  cinder_db_username: "cinder"
+  cinder_db_password: "password"
+
+  cinder_enable_ceph: "true"
+  cinder_ceph_pool_name: "ceph"
+  cinder_ceph_backup_pool_name: "ceph-backup"
+  cinder_ceph_rbd_secret_uuid: "password"
+
+sources:
+  openstack/cinder:
+    git_url: https://github.com/openstack/cinder.git
+    git_ref: master

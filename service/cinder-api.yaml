@@ -1,0 +1,67 @@
+service:
+  name: cinder-api
+  ports:
+    - {{ cinder_api_port }}
+  containers:
+    - name: cinder-api
+      image: cinder-api
+      probes:
+        readiness: "true"
+        liveness: "true"
+      pre:
+        - name: cinder-db-create
+          dependencies:
+            - mariadb
+          type: single
+          command:
+            mysql -u root -p{{ db_root_password }} -h mariadb -e "create database {{ cinder_db_name }};
+            grant all privileges on {{ cinder_db_name }}.* to '{{ cinder_db_username }}'@'%' identified by '{{ cinder_db_password }}';"
+        - name: cinder-db-sync
+          files:
+            - cinder
+          dependencies:
+            - cinder-db-create
+          type: single
+          command: cinder-manage db sync
+        - name: cinder-user-create
+          dependencies:
+            - keystone
+          type: single
+          command: openstack user create --domain default --password {{ cinder_db_password  }} {{ cinder_db_username }}
+        - name: cinder-role-add
+          dependencies:
+            - cinder-user-create
+          type: single
+          command: openstack role add --project {{ openstack_project_name }} --user {{ cinder_db_username }} admin
+        - name: cinder-service-create
+          dependencies:
+            - keystone
+          type: single
+          command: openstack service create --name cinder --description "OpenStack Cinder Service" volume
+        - name: cinder-public-endpoint-create
+          dependencies:
+            - cinder-service-create
+          type: single
+          command: openstack endpoint create --region RegionOne volume public http://cinder-api:{{ cinder_api_port }}/v2/%\(tenant_id\)s
+        - name: cinder-internal-endpoint-create
+          dependencies:
+            - cinder-service-create
+          type: single
+          command: openstack endpoint create --region RegionOne volume internal http://cinder-api:{{ cinder_api_port }}/v2/%\(tenant_id\)s
+        - name: cinder-admin-endpoint-create
+          dependencies:
+            - cinder-service-create
+          type: single
+          command: openstack endpoint create --region RegionOne volume admin http://cinder-api:{{ cinder_api_port }}/v2/%\(tenant_id\)s
+      daemon:
+        command: cinder-api --config-file /etc/cinder/cinder.conf
+        files:
+          - cinder
+        dependencies:
+          - memcached
+          - rabbitmq
+
+files:
+  cinder:
+    path: /etc/cinder/cinder.conf
+    content: cinder.conf.j2

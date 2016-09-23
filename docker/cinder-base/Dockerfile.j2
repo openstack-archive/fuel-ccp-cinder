@@ -1,0 +1,20 @@
+FROM {{ namespace }}/openstack-base:{{ tag }}
+MAINTAINER {{ maintainer }}
+
+RUN apt-get install -y -t jessie-backports --no-install-recommends ceph-common
+
+{{ copy_sources("openstack/cinder", "/cinder") }}
+
+RUN useradd --user-group cinder \
+    && /var/lib/microservices/venv/bin/pip --no-cache-dir install --upgrade /cinder \
+    && mkdir -p /etc/cinder /var/lib/cinder /home/cinder \
+    && cp -r /cinder/etc/cinder/* /etc/cinder/ \
+    && chown -R cinder: /etc/cinder /var/lib/cinder /home/cinder \
+    && sed -i 's|^exec_dirs.*|exec_dirs=/var/lib/kolla/venv/bin,/sbin,/usr/sbin,/bin,/usr/bin,/usr/local/bin,/usr/local/sbin|g' /etc/cinder/rootwrap.conf
+
+COPY cinder_sudoers /etc/sudoers.d/cinder_sudoers
+
+RUN usermod -a -G microservices cinder \
+    && mkdir -p /etc/ceph \
+    && chmod 750 /etc/sudoers.d \
+    && chmod 440 /etc/sudoers.d/cinder_sudoers

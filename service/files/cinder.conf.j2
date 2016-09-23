@@ -1,0 +1,68 @@
+[DEFAULT]
+debug = {{ cinder_debug }}
+use_forwarded_for = true
+use_stderr = True
+
+enable_v1_api=false
+volume_name_template = volume-%s
+
+glance_api_servers = glance-api:{{ glance_api_port }}
+
+glance_num_retries = 3
+glance_api_version = 2
+
+os_region_name = RegionOne
+
+enabled_backends = {{ cinder_enabled_backends }}
+
+osapi_volume_listen = {{ network_topology["private"]["address"] }}
+osapi_volume_listen_port = {{ cinder_api_port }}
+
+api_paste_config = /etc/cinder/api-paste.ini
+nova_catalog_info = compute:nova:internalURL
+
+auth_strategy = keystone
+rpc_backend = rabbit
+
+[oslo_messaging_rabbit]
+rabbit_hosts = rabbitmq:{{ rabbitmq_port }}
+rabbit_userid = {{ rabbitmq_user }}
+rabbit_password = {{ rabbitmq_password }}
+rabbit_virtual_host = /
+rabbit_ha_queues = False
+
+[database]
+connection = mysql+pymysql://{{ cinder_db_username }}:{{ cinder_db_password }}@mariadb/{{ cinder_db_name }}
+max_retries = -1
+
+[keystone_authtoken]
+auth_version = v3
+auth_uri = http://keystone:{{ keystone_public_port }}/v3
+auth_url = http://keystone:{{ keystone_admin_port }}/v3
+auth_type = password
+project_domain_id = default
+user_domain_id = default
+project_name = service
+username = {{ cinder_db_username }}
+password = {{ cinder_db_password }}
+memcached_servers = memcached:{{ memcached_port }}
+
+[oslo_concurrency]
+lock_path = /var/lib/cinder/tmp
+
+{% if cinder_enable_ceph | bool %}
+[rbd-1]
+volume_driver = cinder.volume.drivers.rbd.RBDDriver
+rbd_pool = {{ cinder_ceph_pool_name }}
+rbd_ceph_conf = /etc/ceph/ceph.conf
+rbd_flatten_volume_from_snapshot = false
+rbd_max_clone_depth = 5
+rbd_store_chunk_size = 4
+rados_connect_timeout = -1
+rbd_user = cinder
+rbd_secret_uuid = {{ cinder_ceph_rbd_secret_uuid }}
+report_discard_supported = True
+{% endif %}
+
+[privsep_entrypoint]
+helper_command=sudo cinder-rootwrap /etc/cinder/rootwrap.conf privsep-helper --config-file /etc/cinder/cinder.conf
