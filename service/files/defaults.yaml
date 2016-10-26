@@ -1,6 +1,7 @@
 configs:
   cinder:
-    api_port: 8776
+    api_port:
+      cont: 8776
     debug: false
     username: "cinder"
     password: "password"
