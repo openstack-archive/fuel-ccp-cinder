@@ -5,7 +5,9 @@ service:
       image: cinder-scheduler
       probes:
         readiness: "true"
-        liveness: "true"
+        liveness:
+          command: "true"
+          type: "exec"
       daemon:
         command: cinder-scheduler --config-file /etc/cinder/cinder.conf
         files:

@@ -7,7 +7,9 @@ service:
       image: cinder-api
       probes:
         readiness: "true"
-        liveness: "true"
+        liveness:
+          command: "true"
+          type: "exec"
       pre:
         - name: cinder-db-create
           dependencies:
