@@ -5,7 +5,7 @@ use_stderr = True
 
 volume_name_template = volume-%s
 
-glance_api_servers = {{ address('glance-api') }}:{{ glance.api_port }}
+glance_api_servers = {{ address('glance-api') }}:{{ glance.api_port.cont }}
 
 glance_num_retries = 3
 glance_api_version = 2
@@ -15,7 +15,7 @@ os_region_name = RegionOne
 enabled_backends = {{ cinder.enabled_backends }}
 
 osapi_volume_listen = {{ network_topology["private"]["address"] }}
-osapi_volume_listen_port = {{ cinder.api_port }}
+osapi_volume_listen_port = {{ cinder.api_port.cont }}
 
 api_paste_config = /etc/cinder/api-paste.ini
 nova_catalog_info = compute:nova:internalURL
@@ -30,15 +30,15 @@ max_retries = -1
 
 [keystone_authtoken]
 auth_version = v3
-auth_uri = http://{{ address('keystone') }}:{{ keystone.public_port }}/v3
-auth_url = http://{{ address('keystone') }}:{{ keystone.admin_port }}/v3
+auth_uri = http://{{ address('keystone') }}:{{ keystone.public_port.cont }}/v3
+auth_url = http://{{ address('keystone') }}:{{ keystone.admin_port.cont }}/v3
 auth_type = password
 project_domain_id = default
 user_domain_id = default
 project_name = service
 username = {{ cinder.username }}
 password = {{ cinder.password }}
-memcached_servers = {{ address('memcached') }}:{{ memcached.port }}
+memcached_servers = {{ address('memcached') }}:{{ memcached.port.cont }}
 
 [oslo_concurrency]
 lock_path = /var/lib/cinder/tmp
