@@ -2,6 +2,7 @@ configs:
   cinder:
     api_port:
       cont: 8776
+      ingress: volume
     debug: false
     username: "cinder"
     password: "password"
