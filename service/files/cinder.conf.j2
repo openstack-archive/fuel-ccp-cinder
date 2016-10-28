@@ -38,7 +38,7 @@ user_domain_id = default
 project_name = service
 username = {{ cinder.username }}
 password = {{ cinder.password }}
-memcached_servers = {{ address('memcached') }}:{{ memcached.port.cont }}
+memcached_servers = {{ address("memcached", memcached.port, multiple=True) }}
 
 [oslo_concurrency]
 lock_path = /var/lib/cinder/tmp
