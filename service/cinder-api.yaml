@@ -16,7 +16,7 @@ service:
             - mariadb
           type: single
           command:
-            mysql -u root -p{{ keystone.db.password }} -h mariadb -e "create database {{ cinder.db.name }};
+            mysql -u root -p{{ db.root_password }} -h mariadb -e "create database {{ cinder.db.name }};
             grant all privileges on {{ cinder.db.name }}.* to '{{ cinder.db.username }}'@'%' identified by '{{ cinder.db.password }}';"
         - name: cinder-db-sync
           files:
