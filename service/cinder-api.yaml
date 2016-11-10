@@ -44,7 +44,7 @@ service:
           dependencies:
             - cinder-service-create
           type: single
-          command: openstack endpoint create --region RegionOne volumev2 public http://{{ address('cinder-api', cinder.api_port, external=True) }}/v2/%\(tenant_id\)s
+          command: openstack endpoint create --region RegionOne volumev2 public {{ address('cinder-api', cinder.api_port, external=True, with_scheme=True) }}/v2/%\(tenant_id\)s
         - name: cinder-internal-endpoint-create
           dependencies:
             - cinder-service-create
