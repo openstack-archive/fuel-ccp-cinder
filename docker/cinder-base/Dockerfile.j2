@@ -10,7 +10,8 @@ RUN useradd --user-group -G microservices cinder \
     && mkdir -p /etc/cinder /var/lib/cinder /home/cinder \
     && cp -r /cinder/etc/cinder/* /etc/cinder/ \
     && chown -R cinder: /etc/cinder /var/lib/cinder /home/cinder \
-    && sed -i 's|^exec_dirs.*|exec_dirs=/var/lib/microservices/venv/bin,/sbin,/usr/sbin,/bin,/usr/bin,/usr/local/bin,/usr/local/sbin|g' /etc/cinder/rootwrap.conf
+    && sed -i 's|^exec_dirs.*|exec_dirs=/var/lib/microservices/venv/bin,/sbin,/usr/sbin,/bin,/usr/bin,/usr/local/bin,/usr/local/sbin|g' /etc/cinder/rootwrap.conf \
+    && rm -rf /cinder
 
 COPY cinder_sudoers /etc/sudoers.d/cinder_sudoers
 
