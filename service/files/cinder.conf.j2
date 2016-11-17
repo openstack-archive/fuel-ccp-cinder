@@ -25,7 +25,7 @@ auth_strategy = keystone
 transport_url=rabbit://{{ rabbitmq.user }}:{{ rabbitmq.password }}@{{ address('rabbitmq') }}
 
 [database]
-connection = mysql+pymysql://{{ cinder.db.username }}:{{ cinder.db.password }}@{{ address('mariadb') }}/{{ cinder.db.name }}
+connection = mysql+pymysql://{{ cinder.db.username }}:{{ cinder.db.password }}@{{ address(service.database) }}/{{ cinder.db.name }}
 max_retries = -1
 
 [keystone_authtoken]
