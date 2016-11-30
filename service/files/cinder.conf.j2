@@ -22,7 +22,6 @@ nova_catalog_info = compute:nova:internalURL
 glance_catalog_info = image:glance:internalURL
 
 auth_strategy = keystone
-transport_url=rabbit://{{ rabbitmq.user }}:{{ rabbitmq.password }}@{{ address('rabbitmq') }}
 
 [database]
 connection = mysql+pymysql://{{ cinder.db.username }}:{{ cinder.db.password }}@{{ address(service.database) }}/{{ cinder.db.name }}
@@ -59,3 +58,7 @@ helper_command=sudo cinder-rootwrap /etc/cinder/rootwrap.conf privsep-helper --c
 [oslo_messaging_notifications]
 driver = {{ searchlight.notification_driver }}
 {% endif %}
+
+{# messaging macros template #}
+{{ oslo_messaging[messaging.backend.rpc]('rpc_config') }}
+{{ oslo_messaging[messaging.backend.notifications]('notifications_config') }}
