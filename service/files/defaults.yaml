@@ -21,6 +21,8 @@ configs:
       backup_pool_name: "backup"
       rbd_secret_uuid: "Changeme"
 
+    backup_driver: ceph
+
 sources:
   openstack/cinder:
     git_url: https://github.com/openstack/cinder.git

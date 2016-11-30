@@ -1,0 +1,30 @@
+dsl_version: 0.1.0
+service:
+  name: cinder-backup
+  containers:
+    - name: cinder-backup
+      image: cinder-backup
+      privileged: true
+      daemon:
+        command: cinder-backup --config-file /etc/cinder/cinder.conf --config-file /etc/cinder/cinder-backup.conf
+        files:
+          - cinder-conf
+          # {% if cinder.ceph.enable %}
+          - ceph-conf
+          - cinder-ceph-key
+          # {% endif %}
+        dependencies:
+          - cinder-api
+files:
+  cinder-conf:
+    path: /etc/cinder/cinder.conf
+    content: cinder.conf.j2
+  cinder-backup-conf:
+    path: /etc/cinder/cinder-backup.conf
+    content: cinder.conf.j2
+  ceph-conf:
+    path: /etc/ceph/ceph.conf
+    content: ceph.conf.j2
+  cinder-ceph-key:
+    path: /etc/ceph/ceph.client.cinder.keyring
+    content: ceph.client.cinder.keyring.j2
