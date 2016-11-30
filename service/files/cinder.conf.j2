@@ -22,7 +22,6 @@ nova_catalog_info = compute:nova:internalURL
 glance_catalog_info = image:glance:internalURL
 
 auth_strategy = keystone
-transport_url=rabbit://{{ rabbitmq.user }}:{{ rabbitmq.password }}@{{ address('rabbitmq') }}
 
 [database]
 connection = mysql+pymysql://{{ cinder.db.username }}:{{ cinder.db.password }}@{{ address(service.database) }}/{{ cinder.db.name }}
@@ -54,3 +53,45 @@ rbd_ceph_conf = /etc/ceph/ceph.conf
 
 [privsep_entrypoint]
 helper_command=sudo cinder-rootwrap /etc/cinder/rootwrap.conf privsep-helper --config-file /etc/cinder/cinder.conf
+
+{% macro transport_url(backend) -%}
+{% if backend == 'rabbitmq' %}
+transport_url=rabbit://{{ rabbitmq.user }}:{{ rabbitmq.password }}@{{ address('rabbitmq') }}{% endif %}
+{% if backend == 'zmq' %}
+transport_url=zmq://{% endif %}
+{%- endmacro %}
+
+[DEFAULT]
+{{ transport_url(messaging.backend.rpc) }}
+
+[oslo_messaging_notifications]
+{{ transport_url(messaging.backend.notifications) }}
+
+[oslo_messaging_rabbit]
+rabbit_ha_queues = true
+
+{% if 'zmq' in [messaging.backend.notifications, messaging.backend.rpc] %}
+[oslo_messaging_zmq]
+rpc_zmq_host={{network_topology["private"]["address"]}}
+use_router_proxy=true
+rpc_use_acks=true
+
+{% if zmq.matchmaker == 'redis' %}
+[oslo_messaging_zmq]
+rpc_zmq_matchmaker=redis
+
+[matchmaker_redis]
+password={{ redis.password }}
+
+{% if redis.deployment == 'single' %}
+host={{ address('redis') }}
+port={{ redis.ports.server.cont }}
+{% endif %}
+
+{% if redis.deployment == 'ha' %}
+sentinel_hosts={{address('redis-sentinel')}}:{{ redis.ports.sentinel.cont }}
+sentinel_group_name={{zmq.sentinel.master_group}}
+{% endif %}
+{% endif %}
+
+{% endif %}
