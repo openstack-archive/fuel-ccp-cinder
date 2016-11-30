@@ -62,7 +62,8 @@ service:
           - cinder-conf
         dependencies:
           - memcached
-          - rabbitmq
+          - {{ messaging.dependencies[messaging.backend.rpc] }}
+          - {{ messaging.dependencies[messaging.backend.notifications] }}
 
 files:
   cinder-conf:
