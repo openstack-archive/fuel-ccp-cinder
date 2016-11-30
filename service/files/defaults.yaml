@@ -18,8 +18,10 @@ configs:
       key: "Changeme"
       username: "cinder"
       pool_name: "volumes"
-      backup_pool_name: "backup"
+      backup_pool_name: "backups"
       rbd_secret_uuid: "Changeme"
+
+    backup_driver: ceph
 
 sources:
   openstack/cinder:
