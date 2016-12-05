@@ -28,5 +28,5 @@ files:
     path: /etc/ceph/ceph.conf
     content: ceph.conf.j2
   cinder-ceph-key:
-    path: /etc/ceph/ceph.client.cinder.keyring
+    path: /etc/ceph/ceph.client.{{ cinder.ceph.username }}.keyring
     content: ceph.client.cinder.keyring.j2
