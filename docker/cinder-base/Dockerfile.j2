@@ -1,11 +1,11 @@
 FROM {{ image_spec("openstack-base") }}
 MAINTAINER {{ maintainer }}
 
-COPY sources.list.debian /etc/apt/sources.list.d/ceph.list
+COPY {{ render('sources.list.debian.j2') }} /etc/apt/sources.list.d/ceph.list
 {{ copy_sources("openstack/cinder", "/cinder") }}
 
 RUN useradd --user-group -G microservices cinder \
-    && apt-key adv --recv-keys --keyserver hkp://keyserver.ubuntu.com:80 460F3994 \
+    && apt-key adv --recv-keys --keyserver {{ url.ceph.debian.keyserver }} {{ url.ceph.debian.keyid }} \
     && /var/lib/microservices/venv/bin/pip install --upgrade /cinder \
     && mkdir -p /etc/cinder /var/lib/cinder /home/cinder \
     && cp -r /cinder/etc/cinder/* /etc/cinder/ \
