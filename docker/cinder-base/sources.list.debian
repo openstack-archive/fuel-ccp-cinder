@@ -1,1 +1,1 @@
-deb http://download.ceph.com/debian-jewel jessie main
+deb {{ url.ceph.debian.repo }} jessie main
