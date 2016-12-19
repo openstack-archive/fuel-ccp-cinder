@@ -1,0 +1,8 @@
+[DEFAULT]
+
+{% if cinder.backup_driver == "ceph" %}
+backup_driver = cinder.backup.drivers.ceph
+backup_ceph_conf = /etc/ceph/ceph.conf
+backup_ceph_pool = {{ cinder.ceph.backup_pool_name }}
+backup_ceph_user = {{ cinder.ceph.username }}
+{% endif %}
