@@ -4,11 +4,6 @@ service:
   containers:
     - name: cinder-scheduler
       image: cinder-scheduler
-      probes:
-        readiness: "true"
-        liveness:
-          command: "true"
-          type: "exec"
       daemon:
         command: cinder-scheduler --config-file /etc/cinder/cinder.conf
         files:

@@ -5,11 +5,6 @@ service:
     - name: cinder-volume
       image: cinder-volume
       privileged: true
-      probes:
-        readiness: "true"
-        liveness:
-          command: "true"
-          type: "exec"
       daemon:
         command: cinder-volume --config-file /etc/cinder/cinder.conf
         files:

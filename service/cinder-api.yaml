@@ -6,11 +6,6 @@ service:
   containers:
     - name: cinder-api
       image: cinder-api
-      probes:
-        readiness: "true"
-        liveness:
-          command: "true"
-          type: "exec"
       pre:
         - name: cinder-db-create
           dependencies:
