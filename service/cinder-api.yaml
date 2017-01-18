@@ -29,9 +29,9 @@ service:
         - name: cinder-role-add
           dependencies:
             - cinder-user-create
+            - keystone-create-project
           type: single
           command: openstack role add --project service --user {{ cinder.username }} admin
-
         - name: cinder-service-create
           dependencies:
             - keystone
