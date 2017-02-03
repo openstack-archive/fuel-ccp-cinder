@@ -14,7 +14,11 @@ os_region_name = RegionOne
 
 enabled_backends = {{ cinder.enabled_backends }}
 
+{% if cinder.tls.enabled %}
+osapi_volume_listen = 127.0.0.1
+{% else %}
 osapi_volume_listen = {{ network_topology["private"]["address"] }}
+{% endif %}
 osapi_volume_listen_port = {{ cinder.api_port.cont }}
 
 api_paste_config = /etc/cinder/api-paste.ini
@@ -27,17 +31,7 @@ auth_strategy = keystone
 connection = mysql+pymysql://{{ cinder.db.username }}:{{ cinder.db.password }}@{{ address(service.database) }}/{{ cinder.db.name }}
 max_retries = -1
 
-[keystone_authtoken]
-auth_version = v3
-auth_uri = {{ address('keystone', keystone.public_port, with_scheme=True) }}/v3
-auth_url = {{ address('keystone', keystone.admin_port, with_scheme=True) }}/v3
-auth_type = password
-project_domain_id = default
-user_domain_id = default
-project_name = service
-username = {{ cinder.username }}
-password = {{ cinder.password }}
-memcached_servers = {{ address('memcached', memcached.port) }}
+{{ keystone_authtoken.keystone_authtoken(cinder.user, cinder.password) }}
 
 [oslo_concurrency]
 lock_path = /var/lib/cinder/tmp

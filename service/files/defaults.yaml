@@ -1,5 +1,7 @@
 configs:
   cinder:
+    tls:
+      enabled: true
     api_port:
       cont: 8776
       ingress: volume
