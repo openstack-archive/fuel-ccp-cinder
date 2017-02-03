@@ -1,0 +1,7 @@
+{% if security.tls.enabled %}
+
+upstream cinder_api {
+    server 127.0.0.1:{{ cinder.tls.api_port }};
+}
+
+{% endif %}
