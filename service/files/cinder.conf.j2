@@ -14,7 +14,11 @@ os_region_name = RegionOne
 
 enabled_backends = {{ cinder.enabled_backends }}
 
+{% if security.tls.enabled %}
+osapi_volume_listen = 127.0.0.1
+{% else %}
 osapi_volume_listen = {{ network_topology["private"]["address"] }}
+{% endif %}
 osapi_volume_listen_port = {{ cinder.api_port.cont }}
 
 api_paste_config = /etc/cinder/api-paste.ini
@@ -31,6 +35,9 @@ max_retries = -1
 auth_version = v3
 auth_uri = {{ address('keystone', keystone.public_port, with_scheme=True) }}/v3
 auth_url = {{ address('keystone', keystone.admin_port, with_scheme=True) }}/v3
+{% if security.tls.enabled %}
+cafile = /opt/ccp/etc/tls/ca.pem
+{% endif %}
 auth_type = password
 project_domain_id = default
 user_domain_id = default
@@ -62,3 +69,9 @@ driver = {{ searchlight.notification_driver }}
 {# messaging macros template #}
 {{ oslo_messaging[messaging.backend.rpc]('rpc_config') }}
 {{ oslo_messaging[messaging.backend.notifications]('notifications_config') }}
+{% if security.tls.enabled %}
+[oslo_messaging_rabbit]
+kombu_ssl_version="TLSv1_2"
+rabbit_use_ssl = true
+kombu_ssl_ca_certs = /opt/ccp/etc/tls/ca.pem
+{% endif %}
