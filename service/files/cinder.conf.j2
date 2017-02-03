@@ -5,16 +5,15 @@ use_stderr = True
 
 volume_name_template = volume-%s
 
-glance_api_servers = {{ address('glance-api', glance.api_port) }}
-
-glance_num_retries = 3
-glance_api_version = 2
-
 os_region_name = RegionOne
 
 enabled_backends = {{ cinder.enabled_backends }}
 
+{% if cinder.tls.enabled %}
+osapi_volume_listen = 127.0.0.1
+{% else %}
 osapi_volume_listen = {{ network_topology["private"]["address"] }}
+{% endif %}
 osapi_volume_listen_port = {{ cinder.api_port.cont }}
 
 api_paste_config = /etc/cinder/api-paste.ini
@@ -28,6 +27,20 @@ connection = mysql+pymysql://{{ cinder.db.username }}:{{ cinder.db.password }}@{
 max_retries = -1
 
 {{ keystone_authtoken.keystone_authtoken(cinder.username, cinder.password) }}
+
+{% if glance.tls.enabled %}
+[ssl]
+ca_file = /opt/ccp/etc/tls/ca.pem
+{% endif %}
+
+[glance]
+{% if glance.tls.enabled %}
+protocol = https
+{% endif %}
+glance_api_servers = {{ address('glance-api', glance.api_port, , with_scheme=True) }}
+
+glance_num_retries = 3
+glance_api_version = 2
 
 [oslo_concurrency]
 lock_path = /var/lib/cinder/tmp
