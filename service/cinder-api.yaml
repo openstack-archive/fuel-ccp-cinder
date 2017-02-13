@@ -23,15 +23,14 @@ service:
           command: cinder-manage db sync
         - name: cinder-user-create
           dependencies:
-            - keystone
+            - keystone-create-domain
           type: single
-          command: openstack user create --domain default --password {{ cinder.password  }} {{ cinder.username }}
+          command: openstack user create --domain {{ service_account.domain }} --password {{ cinder.password }} {{ cinder.username }}
         - name: cinder-role-add
           dependencies:
             - cinder-user-create
-            - keystone-create-project
           type: single
-          command: openstack role add --project service --user {{ cinder.username }} admin
+          command: openstack role add --domain {{ service_account.domain }} --user {{ cinder.username }} admin
         - name: cinder-service-create
           dependencies:
             - keystone
