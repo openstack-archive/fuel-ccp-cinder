@@ -1,0 +1,9 @@
+actions:
+  - name: cinder-db-sync
+    image: cinder-base
+    dependencies:
+      - cinder-db-create
+    command: cinder-manage db sync
+    files:
+      - path: /etc/cinder/cinder.conf
+        content: cinder.conf.j2
