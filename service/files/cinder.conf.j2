@@ -12,7 +12,7 @@ glance_api_version = 2
 
 os_region_name = RegionOne
 
-enabled_backends = {{ cinder.enabled_backends }}
+enabled_backends = {{ cinder.enabled_backends | join(",") }}
 
 osapi_volume_listen = {{ network_topology["private"]["address"] }}
 osapi_volume_listen_port = {{ cinder.api_port.cont }}

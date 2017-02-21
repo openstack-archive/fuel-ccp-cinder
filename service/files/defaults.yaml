@@ -6,7 +6,8 @@ configs:
     debug: false
     username: "cinder"
     password: "password"
-    enabled_backends: "rbd"
+    enabled_backends:
+      - rbd
 
     db:
       name: "cinder"
