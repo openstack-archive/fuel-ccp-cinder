@@ -2,7 +2,11 @@ FROM {{ image_spec("cinder-base") }}
 MAINTAINER {{ maintainer }}
 
 RUN apt-get update \
-    && apt-get install -y --no-install-recommends qemu-utils ceph-common python-ceph python-rados \
+    && apt-get install -y --no-install-recommends qemu-utils \
+    && apt-get install -y --no-install-recommends -t jessie-backports \
+           ceph-common \
+           python-ceph \
+           python-rados \
     && apt-get clean \
     && mkdir -p /etc/ceph \
     && chown -R cinder: /etc/ceph \
