@@ -1,0 +1,42 @@
+upgrade:
+  name: upgrade-cinder
+  image: cinder-upgrade
+  steps:
+    - name: backup
+      command: /opt/ccp/bin/backup.sh
+      files:
+        - backup-sh
+      volumes:
+        - name: backup-dir
+          path: /var/ccp/backup/cinder
+          type: host
+          readOnly: false
+      topology_key: backup
+    - name: db-sync
+      command: cinder-manage db sync
+      files:
+        - cinder-conf
+    - name: roll-api
+      type: rolling-upgrade
+      services:
+        - cinder-api
+    - name: roll-scheduler
+      type: rolling-upgrade
+      services:
+        - cinder-scheduler
+    - name: roll-volume
+      type: rolling-upgrade
+      services:
+        - cinder-volume
+    - name: roll-backup
+      type: rolling-upgrade
+      services:
+        - cinder-backup
+files:
+  cinder-conf:
+    path: /etc/cinder/cinder.conf
+    content: cinder.conf.j2
+  backup-sh:
+    path: /opt/ccp/bin/backup.sh
+    content: backup.sh.j2
+    perm: "500"
