@@ -7,7 +7,7 @@ volume_name_template = volume-%s
 
 os_region_name = RegionOne
 
-enabled_backends = {{ cinder.enabled_backends }}
+enabled_backends = {{ cinder.enabled_backends | join(",") }}
 
 {% if cinder.tls.enabled %}
 osapi_volume_listen = 127.0.0.1
