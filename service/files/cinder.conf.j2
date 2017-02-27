@@ -24,7 +24,7 @@ glance_catalog_info = image:glance:internalURL
 auth_strategy = keystone
 
 [database]
-connection = mysql+pymysql://{{ cinder.db.username }}:{{ cinder.db.password }}@{{ address(service.database) }}/{{ cinder.db.name }}{% if db.tls.enabled %}?ssl_ca=/opt/ccp/etc/tls/ca.pem{% endif %}
+connection = mysql+pymysql://{{ cinder.db.username }}:{{ cinder.db.password }}@{{ address("database") }}/{{ cinder.db.name }}{% if db.tls.enabled %}?ssl_ca=/opt/ccp/etc/tls/ca.pem{% endif %}
 max_retries = -1
 
 [keystone_authtoken]
