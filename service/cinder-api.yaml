@@ -9,10 +9,10 @@ service:
       pre:
         - name: cinder-db-create
           dependencies:
-            - {{ service.database }}
+            - {{ database }}
           type: single
           command:
-            mysql -u root -p{{ db.root_password }} -h {{ address(service.database) }} -e "create database {{ cinder.db.name }};
+            mysql -u root -p{{ db.root_password }} -h {{ address(database) }} -e "create database {{ cinder.db.name }};
             create user '{{ cinder.db.username }}'@'%' identified by '{{ cinder.db.password }}'
             {% if db.tls.enabled %} require ssl {% endif %};
             grant all privileges on {{ cinder.db.name }}.* to '{{ cinder.db.username }}'@'%' identified by '{{ cinder.db.password }}'
