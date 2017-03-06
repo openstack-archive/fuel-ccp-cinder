@@ -6,10 +6,20 @@ configs:
       cont: 8776
       ingress: volume
     debug: false
-    username: "cinder"
-    password: "password"
     enabled_backends:
       - rbd
+
+    ceph:
+      enable: false
+      pool_name: "volumes"
+      backup_pool_name: "backups"
+
+    backup_driver: ceph
+
+secret_configs:
+  cinder:
+    username: "cinder"
+    password: "password"
 
     db:
       name: "cinder"
@@ -17,14 +27,9 @@ configs:
       password: "password"
 
     ceph:
-      enable: false
       key: "Changeme"
       username: "cinder"
-      pool_name: "volumes"
-      backup_pool_name: "backups"
       rbd_secret_uuid: "Changeme"
-
-    backup_driver: ceph
 
 sources:
   openstack/cinder:
