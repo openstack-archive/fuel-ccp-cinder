@@ -3,7 +3,6 @@ MAINTAINER {{ maintainer }}
 
 RUN apt-get update \
     && apt-get install -y --no-install-recommends qemu-utils \
-    && apt-get install -y --no-install-recommends -t jessie-backports \
            ceph-common \
            python-ceph \
            python-rados \
