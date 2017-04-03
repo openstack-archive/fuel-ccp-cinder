@@ -1,6 +1,6 @@
 #!/bin/bash -ex
 set -o pipefail
 BACKUP_FILE="/var/ccp/backup/cinder/backup-$(date "+%Y%m%d%H%M%S").sql"
-mysqldump {% if db.tls.enabled %} --ssl-mode REQUIRED {% endif %} -h {{ address(service.database) }} \
+mysqldump {% if db.tls.enabled %} --ssl-mode REQUIRED {% endif %} -h {{ address("database") }} \
     -u {{ cinder.db.username }} -p{{ cinder.db.password }} \
     --single-transaction {{ cinder.db.name }} > "${BACKUP_FILE}"
