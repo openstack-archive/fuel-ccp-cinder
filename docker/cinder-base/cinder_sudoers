@@ -1,1 +1,0 @@
-cinder ALL = (root) NOPASSWD: /var/lib/microservices/venv/bin/cinder-rootwrap /etc/cinder/rootwrap.conf *
